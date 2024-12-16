@@ -58,9 +58,9 @@
 
         symbol {
             bindings = <
-&kp EXCLAMATION  &kp LEFT_BRACE  &kp SQT    &kp DOUBLE_QUOTES  &kp RIGHT_BRACE   &kp QUESTION     &trans  &kp GRAVE              &trans             &trans         &kp PERCENT       &kp BSPC
-&kp HASH         &kp CARET       &kp EQUAL  &kp UNDERSCORE     &kp DOLLAR        &kp ASTERISK     &trans  &kp LEFT_PARENTHESIS   &kp LEFT_BRACKET   &kp AMPERSAND  &kp PLUS          &trans
-&kp TILDE        &kp LESS_THAN   &kp PIPE   &kp MINUS          &kp GREATER_THAN  &kp BACKSLASH    &trans  &kp RIGHT_PARENTHESIS  &kp RIGHT_BRACKET  &kp MINUS      &kp GREATER_THAN  &kp BACKSLASH
+&kp EXCLAMATION  &kp LEFT_BRACE  &kp SQT    &kp DOUBLE_QUOTES  &kp RIGHT_BRACE   &kp QUESTION     &trans  &kp GRAVE              &trans             &trans         &kp PERCENT  &kp BSPC
+&kp HASH         &kp CARET       &kp EQUAL  &kp UNDERSCORE     &kp DOLLAR        &kp ASTERISK     &trans  &kp LEFT_PARENTHESIS   &kp LEFT_BRACKET   &kp AMPERSAND  &kp PLUS     &trans
+&kp TILDE        &kp LESS_THAN   &kp PIPE   &kp MINUS          &kp GREATER_THAN  &kp BACKSLASH    &trans  &kp RIGHT_PARENTHESIS  &kp RIGHT_BRACKET  &kp MINUS      &kp AT       &kp BACKSLASH
                                             &trans             &trans            &trans           &to 0   &trans                 &trans
             >;
         };
