@@ -1,0 +1,42 @@
+#include <behaviors/input_processor_absolute_to_relative.dtsi>
+#include <behaviors/input_processor_gestures.dtsi>
+
+&pro_micro_i2c {
+    status = "okay";
+
+    glidepoint: glidepoint@2a {
+        compatible = "cirque,pinnacle";
+        reg = <0x2a>;
+        status = "okay";
+
+        dr-gpios = <&gpio0 31 GPIO_ACTIVE_HIGH>;
+        absolute-mode;
+        absolute-mode-scale-to-width = <1024>;
+        absolute-mode-scale-to-height = <1024>;
+        absolute-mode-clamp-min-x = <0>;
+        absolute-mode-clamp-max-x = <2047>;
+        absolute-mode-clamp-min-y = <0>;
+        absolute-mode-clamp-max-y = <1535>;
+    };
+};
+
+&zip_gestures {
+    tap-detection;
+    tap-timout-ms = <130>;
+    prevent_movement_during_tap;
+    circular-scroll;
+    circular-scroll-rim-percent = <12>;
+    circular-scroll-width = <1024>;
+    circular-scroll-height = <1024>;
+    inertial-cursor;
+    inertial-cursor-decay-percent = <96>;
+    wait-for-new-position-ms = <30>;
+};
+
+/ {
+    glidepoint_listener: glidepoint_listener {
+        compatible = "zmk,input-listener";
+        device = <&glidepoint>;
+        input-processors = <&zip_gestures &zip_absolute_to_relative>;
+    };
+};
