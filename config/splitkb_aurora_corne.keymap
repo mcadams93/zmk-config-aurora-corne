@@ -7,6 +7,7 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/mouse.h>
 
 // #include "mouse.dtsi"
 /* Homerow mods */
@@ -42,6 +43,14 @@
             hold-trigger-key-positions = <KEYS_L THUMBS>;
             hold-trigger-on-release;
         };
+
+        mouse_ht: mouse_hold_tap {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <200>;
+            bindings = <&mkp>, <&kp>;
+        };
     };
 
     keymap {
@@ -52,7 +61,7 @@
 &kp TILDE       &kp B                &kp Y            &kp O                &kp U              &kp SINGLE_QUOTE    &kp SEMI    &kp L               &kp D        &kp W             &kp V         &kp Z
 &kp LCTRL       &hml LEFT_CONTROL C  &hml LEFT_ALT I  &hml LEFT_COMMAND E  &hml LEFT_SHIFT A  &kp COMMA           &kp PERIOD  &hmr RIGHT_SHIFT H  &hmr RCMD T  &hmr RIGHT_ALT S  &hmr RCTRL N  &kp Q
 &sk LEFT_SHIFT  &kp G                &kp X            &kp J                &kp K              &kp MINUS           &kp SLASH   &kp R               &kp M        &kp F             &kp P         &sk RIGHT_SHIFT
-                                                      &kp ESCAPE           &lt 2 BACKSPACE    &lt 3 DELETE        &lt 3 TAB   &lt 1 SPACE         &kp RET
+                                                      &mouse_ht LCLK ESCAPE  &lt 2 BACKSPACE    &lt 3 DELETE        &lt 3 TAB   &lt 1 SPACE         &mouse_ht RCLK RET
             >;
         };
 
