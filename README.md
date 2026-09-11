@@ -15,7 +15,7 @@ ZMK firmware configuration for the [splitkb Aurora Corne](https://splitkb.com/pr
 * Mouse click thumb keys via a `mouse_ht` hold-tap behavior (200ms tapping term) — see [Mouse Click Thumb Keys](#mouse-click-thumb-keys) below
 
 ### Trackpad (Right Half)
-The right half has a 40mm Cirque GlidePoint trackpad connected via **SPI**, wired directly to test pads on the trackpad and soldered to accessible pads on the Aurora Corne PCB (OLED header, encoder pads, TRRS jack). No adapter, OLED socket, or pull-up resistors needed.
+The right half has a 40mm Cirque GlidePoint trackpad connected via **SPI**, wired directly from the trackpad's test pads to the nice!nano's GPIO pins. No adapter or pull-up resistors needed.
 
 The trackpad ships in SPI mode by default — no resistor changes needed on the trackpad PCB.
 
@@ -54,35 +54,25 @@ To select text: hold the left outer thumb key (left-click) and slide a finger on
 
 ## Trackpad Wiring Guide
 
-All 7 connections are soldered to pads on the **right half Aurora Corne PCB** — no need to remove the nice!nano from its sockets. The trackpad end connects to the labeled test pads on the back of the Cirque trackpad PCB (see the [Cirque Pinnacle pinout reference](https://cirquepinnacle.readthedocs.io/en/latest/#pinout) for a photo).
+All 7 wires run **directly from the right-half nice!nano to the trackpad** — no Aurora Corne PCB pads are involved. The trackpad end connects to the labeled test pads on the back of the Cirque trackpad PCB (see the [Cirque Pinnacle pinout reference](https://cirquepinnacle.readthedocs.io/en/latest/#pinout) for a photo).
 
-### OLED Header (J2) — 4 connections
-
-The 4-pin through-hole OLED header is located near the nice!nano, between the controller and the top edge of the PCB. Labeled on the silkscreen. If you have an OLED socket installed but no OLED display, you can solder wires to the socket pins.
-
-| OLED header pin | PCB label | nice!nano GPIO | SPI Signal | Trackpad pad |
-| :--- | :--- | :--- | :--- | :--- |
-| Pin 1 (square pad) | GND | GND | Ground | GND (FFC pin 11) |
-| Pin 2 | VCC | VCC | 3.3V Power | VDD (FFC pin 12) |
-| Pin 3 | SCL | D3 (P0.20) | SCK | SCK (FFC pin 1) |
-| Pin 4 | SDA | D2 (P0.17) | MOSI | SI (FFC pin 5) |
-
-### Encoder Pads (SW19C) — 2 connections
-
-The encoder through-hole pads are at the **inner thumb key position** on the right half (the thumb key closest to the center of the keyboard). The EC11 encoder footprint has 3 pins on one side (A, C, B for the rotary shaft) and 2 pins on the other side (for the push switch). Use the A and B pads:
-
-| Encoder pad | nice!nano GPIO | SPI Signal | Trackpad pad |
+| nice!nano pin | nRF52840 GPIO | SPI Signal | Trackpad pad |
 | :--- | :--- | :--- | :--- |
-| Encoder A (ENC1_A) | D20 (P0.29) | MISO | SO (FFC pin 2) |
-| Encoder B (ENC1_B) | D19 (P0.02) | CS | SS (FFC pin 3) |
+| D3 | P0.20 | SCK | SCK (FFC pin 1) |
+| D2 | P0.17 | MOSI | SI (FFC pin 5) |
+| D20 | P0.29 | MISO | SO (FFC pin 2) |
+| D19 | P0.02 | CS | SS (FFC pin 3) |
+| D0 | P0.08 | DR | DR (FFC pin 4) |
+| VCC | — | 3.3V Power | VDD (FFC pin 12) |
+| GND | — | Ground | GND (FFC pin 11) |
 
-### TRRS Jack (J3) — 1 connection
+The pins are split across both sides of the nice!nano:
 
-The TRRS jack pads are on the **inner edge** of the PCB (the side that faces the other half). If you haven't installed the TRRS jack, the through-hole pads are exposed and easy to solder to. Use the pad connected to the DATA net:
+* **Left header:** D0, D2, D3
+* **Right header:** D19, D20
+* **Right header, top:** VCC, GND
 
-| TRRS pad | nice!nano GPIO | SPI Signal | Trackpad pad |
-| :--- | :--- | :--- | :--- |
-| DATA | D0 (P0.08) | DR | DR (FFC pin 4) |
+Because the wires land on the nice!nano itself, solder them before seating the controller in its sockets (or lift it out first) so you have access to both pin headers.
 
 ---
 
@@ -93,7 +83,7 @@ The TRRS jack pads are on the **inner edge** of the PCB (the side that faces the
 | `config/west.yml` | West manifest with ZMK v0.3 + halfdane modules (gestures, input processors, cirque driver) |
 | `config/splitkb_aurora_corne.conf` | Shared Kconfig: enables SPI, pointing, Cirque driver |
 | `config/splitkb_aurora_corne.keymap` | Shared keymap (4 layers, homerow mods) |
-| `config/splitkb_aurora_corne_right.overlay` | Right-half overlay: SPI1 remapped to OLED/encoder/TRRS pads, gesture config |
+| `config/splitkb_aurora_corne_right.overlay` | Right-half overlay: SPI1 mapped to the nice!nano trackpad pins, gesture config |
 | `config/mouse.dtsi` | Legacy mouse key emulation (currently unused) |
 
 ---
