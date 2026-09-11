@@ -44,7 +44,7 @@
 
 &zip_gestures {
     tap-detection;
-    tap-timout-ms = <130>;
+    tap-timeout-ms = <130>;
     prevent_movement_during_tap;
     circular-scroll;
     circular-scroll-rim-percent = <12>;
