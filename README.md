@@ -10,8 +10,9 @@ ZMK firmware configuration for the [splitkb Aurora Corne](https://splitkb.com/pr
 ## Features
 
 ### Keymap
-* 4 layers: Default, Symbol, Cursor, Lower
-* Balanced homerow mods (280ms tapping term, 150ms prior idle)
+* 4 layers: Default, Symbol, Cursor, Lower, plus mouse keys on the thumb keys
+* Balanced homerow mods (250ms tapping term, 150ms prior idle)
+* Mouse click thumb keys via a `mouse_ht` hold-tap behavior (200ms tapping term) — see [Mouse Click Thumb Keys](#mouse-click-thumb-keys) below
 
 ### Trackpad (Right Half)
 The right half has a 40mm Cirque GlidePoint trackpad connected via **SPI**, wired directly to test pads on the trackpad and soldered to accessible pads on the Aurora Corne PCB (OLED header, encoder pads, TRRS jack). No adapter, OLED socket, or pull-up resistors needed.
@@ -22,9 +23,22 @@ Gestures (via [halfdane's zmk-input-gestures](https://github.com/halfdane/zmk-in
 * **Pointer Movement:** Inner 88% of the trackpad surface
 * **Tap-to-Click:** Tap anywhere on the inner surface
 * **Double-Tap:** Double-tap anywhere on the inner surface
-* **Right-Click:** Tap in the bottom-right quadrant
 * **Circular Rim Scrolling:** Trace the outermost 12% rim (clockwise = scroll down)
 * **Inertial Cursor:** Flick and lift to glide (96% decay)
+
+#### Input Scaling
+
+Raw trackpad input is scaled down before reaching the host:
+* **Mouse movement:** scaled to 1/2 speed via `&zip_xy_scaler 1 2`
+* **Scroll:** scaled to 1/3 speed via `&zip_scroll_scaler 1 3`
+
+#### Mouse Click Thumb Keys
+
+Left-click, right-click, and click-and-drag are handled by the two outer thumb keys using a `mouse_ht` hold-tap behavior (200ms tapping term):
+* **Left outer thumb key:** hold for left-click, tap for Escape
+* **Right outer thumb key:** hold for right-click, tap for Enter
+
+To select text: hold the left outer thumb key (left-click) and slide a finger on the trackpad to drag-select.
 
 ---
 
