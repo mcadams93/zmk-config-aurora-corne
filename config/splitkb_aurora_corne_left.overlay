@@ -1,0 +1,5 @@
+#include "splitkb_aurora_corne.dtsi"
+
+&glidepoint_listener {
+    status = "okay";
+};

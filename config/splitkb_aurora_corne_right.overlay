@@ -1,6 +1,4 @@
-#include <behaviors/input_processor_absolute_to_relative.dtsi>
-#include <behaviors/input_processor_gestures.dtsi>
-#include <input/processors.dtsi>
+#include "splitkb_aurora_corne.dtsi"
 
 &pinctrl {
     spi1_default: spi1_default {
@@ -26,39 +24,35 @@
     cs-gpios = <&gpio0 2 GPIO_ACTIVE_LOW>;
 
     glidepoint: glidepoint@0 {
-        compatible = "cirque,pinnacle";
+        compatible = "cirque,pinnacle2";
         reg = <0>;
-        spi-max-frequency = <10000000>;
+        spi-max-frequency = <1000000>;
         status = "okay";
 
-        dr-gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
-        absolute-mode;
-        absolute-mode-scale-to-width = <1024>;
-        absolute-mode-scale-to-height = <1024>;
-        absolute-mode-clamp-min-x = <0>;
-        absolute-mode-clamp-max-x = <2047>;
-        absolute-mode-clamp-min-y = <0>;
-        absolute-mode-clamp-max-y = <1535>;
+        data-ready-gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
+        sensitivity = "1x";
+        data-mode = "absolute";
+        absolute-relative-multiplier = <12>;
+        absolute-relative-divisor = <40>;
+        absolute-touch-min-z = <10>;
+
+        primary-tap-enable;
+        absolute-tap-drag-enable;
+        absolute-tap-max-ms = <200>;
+        absolute-tap-max-movement = <80>;
+        absolute-tap-click-ms = <30>;
+        absolute-tap-drag-timeout-ms = <300>;
+
+        absolute-right-edge-scroll-enable;
+        absolute-scroll-zone = <240>;
+        absolute-scroll-divisor = <40>;
+
+        sleep-mode-enable;
+        invert-x;
+        invert-y;
     };
 };
 
-&zip_gestures {
-    tap-detection;
-    tap-timout-ms = <130>;
-    prevent_movement_during_tap;
-    circular-scroll;
-    circular-scroll-rim-percent = <12>;
-    circular-scroll-width = <1024>;
-    circular-scroll-height = <1024>;
-    inertial-cursor;
-    inertial-cursor-decay-percent = <96>;
-    wait-for-new-position-ms = <30>;
-};
-
-/ {
-    glidepoint_listener: glidepoint_listener {
-        compatible = "zmk,input-listener";
-        device = <&glidepoint>;
-        input-processors = <&zip_gestures &zip_absolute_to_relative &zip_xy_scaler 1 2 &zip_scroll_scaler 1 3>;
-    };
+&glidepoint_split {
+    device = <&glidepoint>;
 };

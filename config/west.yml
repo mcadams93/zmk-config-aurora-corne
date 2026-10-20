@@ -2,21 +2,15 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: halfdane
-      url-base: https://github.com/halfdane
+    - name: tokyo2006
+      url-base: https://github.com/tokyo2006
   projects:
     - name: zmk
       remote: zmkfirmware
       revision: v0.3
       import: app/west.yml
-    - name: zmk-input-gestures
-      remote: halfdane
-      revision: c6590627ec627f49582ee945b880762fc715c2c9
-    - name: zmk-input-processors
-      remote: halfdane
-      revision: 7d18ba7af91e485bbd9febda150505fb38ce6d8a
     - name: cirque-input-module
-      remote: halfdane
-      revision: 97676777223730abfa0e99c8d20a1ded70cb15fa
+      remote: tokyo2006
+      revision: 81b3fc2
   self:
     path: config
