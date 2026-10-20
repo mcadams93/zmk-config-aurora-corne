@@ -21,6 +21,6 @@
 include:
   - board: nice_nano_v2
     shield: splitkb_aurora_corne_left
-    cmake-args: -DCMAKE_C_FLAGS=-I/tmp/zmk-config/config/compat
+    cmake-args: "-DCMAKE_C_FLAGS=-include /tmp/zmk-config/config/compat_input.h"
   - board: nice_nano_v2
     shield: splitkb_aurora_corne_right
