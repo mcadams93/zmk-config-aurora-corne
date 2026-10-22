@@ -54,25 +54,30 @@ To select text: hold the left outer thumb key (left-click) and slide a finger on
 
 ## Trackpad Wiring Guide
 
-All 7 wires run **directly from the right-half nice!nano to the trackpad** — no Aurora Corne PCB pads are involved. The trackpad end connects to the labeled test pads on the back of the Cirque trackpad PCB (see the [Cirque Pinnacle pinout reference](https://cirquepinnacle.readthedocs.io/en/latest/#pinout) for a photo).
+The trackpad (Cirque TM040040, 40mm) connects to the right half over **SPI1**. Three wires go to the nice!nano pins, and four wires go to the Aurora Corne **OLED header** (the OLED is not used on the right half). The trackpad end connects to the labeled test pads on the back of the Cirque trackpad PCB (see the [Cirque Pinnacle pinout reference](https://cirquepinnacle.readthedocs.io/en/latest/#pinout) and the [Aurora Corne schematic](https://docs.splitkb.com/doc/aurora_corne_rev1.pdf)).
 
-| nice!nano pin | nRF52840 GPIO | SPI Signal | Trackpad pad |
+| Trackpad pad | Solder point | nRF52840 GPIO | SPI Signal |
 | :--- | :--- | :--- | :--- |
-| D3 | P0.20 | SCK | SCK (FFC pin 1) |
-| D2 | P0.17 | MOSI | SI (FFC pin 5) |
-| D20 | P0.29 | MISO | SO (FFC pin 2) |
-| D19 | P0.02 | CS | SS (FFC pin 3) |
-| D0 | P0.08 | DR | DR (FFC pin 4) |
-| VCC | — | 3.3V Power | VDD (FFC pin 12) |
-| GND | — | Ground | GND (FFC pin 11) |
+| DR | nice!nano pin 029 (D20) | P0.29 | DR |
+| SS | nice!nano pin 002 (D19) | P0.02 | CS |
+| SO | nice!nano pin 115 (D18) | P1.15 | MISO |
+| SI | OLED header SDA | P0.17 (D2) | MOSI |
+| SCK | OLED header SCL | P0.20 (D3) | SCK |
+| VDD | OLED header VCC | — | 3.3V Power |
+| GND | OLED header GND | — | Ground |
 
-The pins are split across both sides of the nice!nano:
+The wires form two groups:
 
-* **Left header:** D0, D2, D3
-* **Right header:** D19, D20
-* **Right header, top:** VCC, GND
+* **nice!nano pins:** 029, 002, 115 (DR, SS, SO)
+* **OLED header:** SDA, SCL, VCC, GND (SI, SCK, VDD, GND)
 
-Because the wires land on the nice!nano itself, solder them before seating the controller in its sockets (or lift it out first) so you have access to both pin headers.
+**Mounting orientation:** install the trackpad face up in its holder with the FFC connector at the 6 o'clock position (toward the thumb keys and the power switch, opposite the nice!nano USB connector). The test pads face down toward the nice!nano. Seen from above, DR, SS and SO sit at the right side of the pad group, top to bottom, directly above nice!nano pins 029, 002 and 115. The X/Y direction for this mounting has not been tested yet; adjust `invert-x` / `invert-y` in the right overlay if needed.
+
+> **Caution:** do **not** install R1 and R2 (the 4.7kΩ SDA/SCL pull-up resistors) on the right half, and do not install the OLED display, encoder or RGB LEDs there — they share pins with the trackpad. The firmware disables the I2C bus (`&pro_micro_i2c`) on the right half.
+
+> **Note:** the schematic shows the OLED header order as SDA, SCL, VCC, GND. Check the order on the PCB silkscreen before soldering, and do a continuity test on each pad first.
+
+Alternatively, SCK and SI can go to nice!nano pins D3 (P0.20) and D2 (P0.17) instead of the OLED header; the firmware is the same.
 
 ---
 
