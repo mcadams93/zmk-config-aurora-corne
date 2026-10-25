@@ -2,15 +2,10 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: nxtkb
-      url-base: https://github.com/nxtkb
   projects:
     - name: zmk
       remote: zmkfirmware
       revision: cb615aee9a7c427e251f2ab62080c1a44a165da9
       import: app/west.yml
-    - name: cirque-input-module
-      remote: nxtkb
-      revision: 8af03a4c061580c14ec8745caf0fa2dd3fc7f042
   self:
     path: config

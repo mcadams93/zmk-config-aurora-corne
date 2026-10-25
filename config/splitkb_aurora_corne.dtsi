@@ -1,6 +1,3 @@
-#include <dt-bindings/zmk/input_transform.h>
-#include <zephyr/dt-bindings/input/input-event-codes.h>
-
 / {
     split_inputs {
         #address-cells = <1>;
@@ -11,18 +8,9 @@
         };
     };
 
-    glidepoint_transform: glidepoint_transform {
-        compatible = "zmk,input-processor-transform";
-        #input-processor-cells = <1>;
-        type = <INPUT_EV_REL>;
-        x-codes = <INPUT_REL_X>;
-        y-codes = <INPUT_REL_Y>;
-    };
-
     glidepoint_listener: glidepoint_listener {
         compatible = "zmk,input-listener";
         status = "disabled";
         device = <&glidepoint_split>;
-        input-processors = <&glidepoint_transform INPUT_TRANSFORM_X_INVERT>;
     };
 };
