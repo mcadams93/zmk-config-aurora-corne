@@ -1,4 +1,5 @@
-#include "splitkb_aurora_corne.dtsi"
+#include <dt-bindings/zmk/input_transform.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
 
 &pinctrl {
     spi1_default: spi1_default {
@@ -21,6 +22,9 @@
 
 &spi1 {
     status = "okay";
+    pinctrl-0 = <&spi1_default>;
+    pinctrl-1 = <&spi1_sleep>;
+    pinctrl-names = "default", "sleep";
     cs-gpios = <&gpio0 2 GPIO_ACTIVE_LOW>;
 
     glidepoint: glidepoint@0 {
@@ -30,34 +34,50 @@
         status = "okay";
 
         data-ready-gpios = <&gpio0 29 GPIO_ACTIVE_HIGH>;
-        sensitivity = "1x";
+
         data-mode = "absolute";
+        sensitivity = "1x";
+        clipping-enable;
+        active-range-x-min = <128>;
+        active-range-x-max = <1920>;
+        active-range-y-min = <64>;
+        active-range-y-max = <1472>;
+
         absolute-relative-multiplier = <12>;
         absolute-relative-divisor = <40>;
-        absolute-touch-min-z = <10>;
+        absolute-touch-min-z = <12>;
 
         primary-tap-enable;
-        absolute-tap-drag-enable;
         absolute-tap-max-ms = <200>;
         absolute-tap-max-movement = <80>;
-        absolute-tap-click-ms = <30>;
+        absolute-tap-click-ms = <10>;
+        absolute-tap-drag-enable;
         absolute-tap-drag-timeout-ms = <300>;
+
+        absolute-secondary-tap-area-width = <520>;
+        absolute-secondary-tap-area-height = <420>;
 
         absolute-right-edge-scroll-enable;
         absolute-scroll-zone = <240>;
         absolute-scroll-divisor = <40>;
 
-        sleep-mode-enable;
-        // Trackpad is mounted face up with its FFC connector at 6 o'clock.
-        // invert-x / invert-y are untested for this mounting; adjust after a hardware test.
         invert-x;
         invert-y;
     };
 };
 
-// OLED unused on the right half; D2/D3 (P0.17/P0.20) are reused by SPI1.
-&pro_micro_i2c { status = "disabled"; };
+/ {
+    glidepoint_transform: glidepoint_transform {
+        compatible = "zmk,input-processor-transform";
+        #input-processor-cells = <1>;
+        type = <INPUT_EV_REL>;
+        x-codes = <INPUT_REL_X>;
+        y-codes = <INPUT_REL_Y>;
+    };
 
-&glidepoint_split {
-    device = <&glidepoint>;
+    glidepoint_listener: glidepoint_listener {
+        compatible = "zmk,input-listener";
+        device = <&glidepoint>;
+        input-processors = <&glidepoint_transform INPUT_TRANSFORM_X_INVERT>;
+    };
 };
