@@ -44,7 +44,7 @@
 
 &glidepoint_split {
     device = <&glidepoint>;
-    input-processors = <&zip_xy_transform (INPUT_TRANSFORM_XY_SWAP | INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>, <&zip_y_scaler 4 3>;
+    input-processors = <&zip_xy_transform (INPUT_TRANSFORM_XY_SWAP | INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>;
 };
 
 // OLED unused; its I2C pins (SDA=P0.17, SCL=P0.20) are reused by the trackpad SPI (MOSI/SCK).
