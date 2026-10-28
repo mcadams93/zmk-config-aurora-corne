@@ -38,6 +38,7 @@
         sensitivity = "4x";
         primary-tap-enable;
         sleep-mode-enable;
+        idle-packets-count = <3>;
     };
 };
 
