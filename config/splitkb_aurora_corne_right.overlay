@@ -37,6 +37,7 @@
         data-mode = "relative";
         sensitivity = "4x";
         primary-tap-enable;
+        sleep-mode-enable;
     };
 };
 
