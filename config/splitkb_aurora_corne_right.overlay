@@ -35,7 +35,7 @@
         status = "okay";
         data-ready-gpios = <&gpio0 29 GPIO_ACTIVE_HIGH>;
         data-mode = "relative";
-        sensitivity = "4x";
+        sensitivity = "1x";
         primary-tap-enable;
         sleep-mode-enable;
         idle-packets-count = <3>;
