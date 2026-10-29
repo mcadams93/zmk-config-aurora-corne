@@ -1,0 +1,1 @@
+target_sources_ifdef(CONFIG_ZMK_INPUT_PROCESSOR_TAP_CLICK app PRIVATE src/input_processor_tap_click.c)

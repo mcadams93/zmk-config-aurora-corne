@@ -1,0 +1,10 @@
+description: Converts BTN_TOUCH rising edges into one short mouse click
+
+compatible: "zmk,input-processor-tap-click"
+
+include: ip_one_param.yaml
+
+properties:
+  click-ms:
+    type: int
+    default: 20

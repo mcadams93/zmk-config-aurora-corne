@@ -12,21 +12,20 @@
         };
     };
 
-    tap_rclick: tap_rclick {
-        compatible = "zmk,input-processor-code-mapper";
-        #input-processor-cells = <0>;
-        type = <INPUT_EV_KEY>;
-        map = <INPUT_BTN_TOUCH INPUT_BTN_1>;
+    tap_click: tap_click {
+        compatible = "zmk,input-processor-tap-click";
+        #input-processor-cells = <1>;
     };
 
     glidepoint_listener: glidepoint_listener {
         compatible = "zmk,input-listener";
         status = "disabled";
         device = <&glidepoint_split>;
+        input-processors = <&tap_click 0>;
 
         scroller {
             layers = <2>;
-            input-processors = <&zip_xy_transform INPUT_TRANSFORM_Y_INVERT &zip_xy_to_scroll_mapper &zip_scroll_scaler 1 16 &tap_rclick>;
+            input-processors = <&zip_xy_transform INPUT_TRANSFORM_Y_INVERT &zip_xy_to_scroll_mapper &zip_scroll_scaler 1 16 &tap_click 1>;
         };
     };
 };

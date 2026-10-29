@@ -1,0 +1,6 @@
+config ZMK_INPUT_PROCESSOR_TAP_CLICK
+    bool "Tap Click Input Processor"
+    default y
+    depends on DT_HAS_ZMK_INPUT_PROCESSOR_TAP_CLICK_ENABLED
+    depends on ZMK_POINTING
+    depends on !ZMK_SPLIT || ZMK_SPLIT_ROLE_CENTRAL
