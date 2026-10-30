@@ -53,3 +53,6 @@
 // The shield enables the right encoder on pro_micro 19/18 (P0.02/P1.15),
 // which are the trackpad CS and MISO pins. No encoder is fitted.
 &right_encoder { status = "disabled"; };
+
+// Give the Cirque time to power up after VCC is enabled (e.g. waking from deep sleep).
+&{/EXT_POWER} { init-delay-ms = <100>; };
