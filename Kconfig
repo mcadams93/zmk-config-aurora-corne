@@ -4,3 +4,18 @@ config ZMK_INPUT_PROCESSOR_TAP_CLICK
     depends on DT_HAS_ZMK_INPUT_PROCESSOR_TAP_CLICK_ENABLED
     depends on ZMK_POINTING
     depends on !ZMK_SPLIT || ZMK_SPLIT_ROLE_CENTRAL
+
+config ZMK_CORNE_STATUS_SCREEN
+    bool "nice!view status screen with both halves' battery"
+    default y
+    depends on ZMK_DISPLAY && ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
+    depends on SHIELD_NICE_VIEW
+    depends on ZMK_SPLIT && ZMK_SPLIT_ROLE_CENTRAL
+    depends on !NICE_VIEW_WIDGET_STATUS
+    select LV_FONT_MONTSERRAT_14
+    select LV_FONT_MONTSERRAT_16
+    select LV_FONT_MONTSERRAT_18
+    select LV_FONT_UNSCII_8
+    select LV_USE_IMAGE
+    select LV_USE_CANVAS
+    select ZMK_WPM

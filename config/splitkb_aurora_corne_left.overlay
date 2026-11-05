@@ -3,3 +3,8 @@
 &glidepoint_listener {
     status = "okay";
 };
+
+// nice!view CS (pro_micro 1 = P0.06) collides with the underglow SPI3 MOSI; underglow is unused.
+&spi3 {
+    status = "disabled";
+};
