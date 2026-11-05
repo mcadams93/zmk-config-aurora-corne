@@ -44,6 +44,19 @@
             hold-trigger-on-release;
         };
 
+        hmr_slow: home_row_mod_right_slow {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <300>;
+            quick-tap-ms = <150>;
+            require-prior-idle-ms = <150>;
+            bindings = <&kp>, <&kp>;
+
+            hold-trigger-key-positions = <KEYS_L THUMBS>;
+            hold-trigger-on-release;
+        };
+
         prev_tap: prev_tap {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -73,7 +86,7 @@
         default_layer {
             bindings = <
 &kp TILDE       &kp B                &kp Y            &kp O                &kp U              &kp SINGLE_QUOTE    &kp SEMI    &kp L               &kp D        &kp W             &kp V         &kp Z
-&kp LCTRL       &hml LEFT_CONTROL C  &hml LEFT_ALT I  &hml LEFT_COMMAND E  &hml LEFT_SHIFT A  &kp COMMA           &kp PERIOD  &hmr RIGHT_SHIFT H  &hmr RCMD T  &hmr RIGHT_ALT S  &hmr RCTRL N  &kp Q
+&kp LCTRL       &hml LEFT_CONTROL C  &hml LEFT_ALT I  &hml LEFT_COMMAND E  &hml LEFT_SHIFT A  &kp COMMA           &kp PERIOD  &hmr RIGHT_SHIFT H  &hmr RCMD T  &hmr_slow RIGHT_ALT S  &hmr_slow RCTRL N  &kp Q
 &sk LEFT_SHIFT  &kp G                &kp X            &kp J                &kp K              &kp MINUS           &kp SLASH   &kp R               &kp M        &kp F             &kp P         &sk RIGHT_SHIFT
                                                       &mouse_ht LCLK ESCAPE  &lt 2 BACKSPACE    &lt 3 DELETE        &lt 3 TAB   &lt 1 SPACE         &mouse_ht RCLK RET
             >;
