@@ -54,10 +54,11 @@ The Cursor layer also has arrows, Home/End/PgUp/PgDn, undo/redo/cut/copy/paste/f
 ### Display (Left Half)
 
 A nice!view (Sharp memory LCD) on the left half only, with a custom status screen adapted from ZMK's nice!view widgets:
-* Battery for both halves: **L** (with charging indicator) and **R** (shows `--` until the right half reports)
-* Output / Bluetooth profile status
-* Active layer
-* WPM with a small graph
+* **Battery** for both halves, bar + percentage: **L** (with charging indicator) and **R** (shows `--` until the right half reports; full charge shows `100`)
+* **Output** status icon (USB / BLE connected / BLE disconnected / unpaired)
+* **Bluetooth profiles** 1 and 2 (`BT_SEL 0` / `BT_SEL 1`) as circles: solid ring = connected, dashed = paired, filled = active
+* **Modifier row** `S C A G` (Shift, Ctrl, Alt, Cmd/GUI); a box is filled while that modifier (left or right) is held, including home-row mods
+* **Active layer** name
 
 ---
 

@@ -21,14 +21,14 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include <zmk/events/battery_state_changed.h>
 #include <zmk/events/ble_active_profile_changed.h>
 #include <zmk/events/endpoint_changed.h>
-#include <zmk/events/wpm_state_changed.h>
+#include <zmk/events/keycode_state_changed.h>
 #include <zmk/events/layer_state_changed.h>
 #include <zmk/split/central.h>
 #include <zmk/usb.h>
 #include <zmk/ble.h>
 #include <zmk/endpoints.h>
 #include <zmk/keymap.h>
-#include <zmk/wpm.h>
+#include <zmk/keys.h>
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
@@ -46,37 +46,50 @@ struct layer_status_state {
     const char *label;
 };
 
-struct wpm_status_state {
-    uint8_t wpm;
+struct mods_status_state {
+    uint8_t mods;
 };
+
+static void draw_battery_row(lv_obj_t *canvas, lv_coord_t y, const char *name, uint8_t level,
+                             bool charging, bool unknown, lv_draw_label_dsc_t *label_dsc) {
+    char pct[6] = {};
+
+    canvas_draw_text(canvas, 0, y + 4, 8, label_dsc, name);
+    draw_battery_at(canvas, 10, y, level, charging);
+    if (unknown) {
+        strcpy(pct, "--");
+    } else if (level >= 100) {
+        strcpy(pct, "100"); // "100%" doesn't fit in the 24px left of the bar
+    } else {
+        snprintf(pct, sizeof(pct), "%u%%", level);
+    }
+    canvas_draw_text(canvas, 45, y + 4, 23, label_dsc, pct);
+}
 
 static void draw_top(lv_obj_t *widget, const struct status_state *state) {
     lv_obj_t *canvas = lv_obj_get_child(widget, 0);
 
     lv_draw_label_dsc_t label_dsc;
-    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_16, LV_TEXT_ALIGN_RIGHT);
-    lv_draw_label_dsc_t label_dsc_wpm;
-    init_label_dsc(&label_dsc_wpm, LVGL_FOREGROUND, &lv_font_unscii_8, LV_TEXT_ALIGN_RIGHT);
-    lv_draw_label_dsc_t label_dsc_wpm_left;
-    init_label_dsc(&label_dsc_wpm_left, LVGL_FOREGROUND, &lv_font_unscii_8, LV_TEXT_ALIGN_LEFT);
+    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_16, LV_TEXT_ALIGN_LEFT);
+    lv_draw_label_dsc_t label_dsc_small;
+    init_label_dsc(&label_dsc_small, LVGL_FOREGROUND, &lv_font_unscii_8, LV_TEXT_ALIGN_LEFT);
+    lv_draw_label_dsc_t label_dsc_mod;
+    init_label_dsc(&label_dsc_mod, LVGL_FOREGROUND, &lv_font_unscii_8, LV_TEXT_ALIGN_CENTER);
+    lv_draw_label_dsc_t label_dsc_mod_active;
+    init_label_dsc(&label_dsc_mod_active, LVGL_BACKGROUND, &lv_font_unscii_8,
+                   LV_TEXT_ALIGN_CENTER);
     lv_draw_rect_dsc_t rect_black_dsc;
     init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
     lv_draw_rect_dsc_t rect_white_dsc;
     init_rect_dsc(&rect_white_dsc, LVGL_FOREGROUND);
-    lv_draw_line_dsc_t line_dsc;
-    init_line_dsc(&line_dsc, LVGL_FOREGROUND, 1);
 
     // Fill background
     lv_canvas_fill_bg(canvas, LVGL_BACKGROUND, LV_OPA_COVER);
 
-    // Draw batteries: L (this half, central) and R (split peripheral)
-    canvas_draw_text(canvas, 0, 4, 8, &label_dsc_wpm_left, "L");
-    draw_battery_at(canvas, 10, 0, state->battery, state->charging);
-    canvas_draw_text(canvas, 0, 20, 8, &label_dsc_wpm_left, "R");
-    draw_battery_at(canvas, 10, 16, state->peripheral_battery, false);
-    if (state->peripheral_battery == 0) {
-        canvas_draw_text(canvas, 46, 20, 22, &label_dsc_wpm_left, "--");
-    }
+    // Draw batteries: L (this half, central) and R (split peripheral, 0 = unknown)
+    draw_battery_row(canvas, 0, "L", state->battery, state->charging, false, &label_dsc_small);
+    draw_battery_row(canvas, 16, "R", state->peripheral_battery, false,
+                     state->peripheral_battery == 0, &label_dsc_small);
 
     // Draw output status
     char output_text[10] = {};
@@ -98,39 +111,30 @@ static void draw_top(lv_obj_t *widget, const struct status_state *state) {
         break;
     }
 
-    canvas_draw_text(canvas, 0, 0, CANVAS_SIZE, &label_dsc, output_text);
+    canvas_draw_text(canvas, 0, 33, CANVAS_SIZE, &label_dsc, output_text);
 
-    // Draw WPM
-    canvas_draw_rect(canvas, 0, 33, 68, 30, &rect_white_dsc);
-    canvas_draw_rect(canvas, 1, 34, 66, 28, &rect_black_dsc);
+    // Draw modifiers: Shift, Ctrl, Alt, GUI (left or right variant), filled when active
+    static const struct {
+        const char *label;
+        uint8_t mask;
+    } mods[] = {
+        {"S", MOD_LSFT | MOD_RSFT},
+        {"C", MOD_LCTL | MOD_RCTL},
+        {"A", MOD_LALT | MOD_RALT},
+        {"G", MOD_LGUI | MOD_RGUI},
+    };
 
-    char wpm_text[6] = {};
-    snprintf(wpm_text, sizeof(wpm_text), "%d", state->wpm[9]);
-    canvas_draw_text(canvas, 42, 53, 24, &label_dsc_wpm, wpm_text);
+    for (int i = 0; i < ARRAY_SIZE(mods); i++) {
+        lv_coord_t x = i * 17;
+        bool active = (state->mods & mods[i].mask) != 0;
 
-    int max = 0;
-    int min = 256;
-
-    for (int i = 0; i < 10; i++) {
-        if (state->wpm[i] > max) {
-            max = state->wpm[i];
+        canvas_draw_rect(canvas, x, 53, 16, 14, &rect_white_dsc);
+        if (!active) {
+            canvas_draw_rect(canvas, x + 1, 54, 14, 12, &rect_black_dsc);
         }
-        if (state->wpm[i] < min) {
-            min = state->wpm[i];
-        }
+        canvas_draw_text(canvas, x, 56, 16, active ? &label_dsc_mod_active : &label_dsc_mod,
+                         mods[i].label);
     }
-
-    int range = max - min;
-    if (range == 0) {
-        range = 1;
-    }
-
-    lv_point_t points[10];
-    for (int i = 0; i < 10; i++) {
-        points[i].x = 2 + i * 7;
-        points[i].y = 59 - (state->wpm[i] - min) * 22 / range;
-    }
-    canvas_draw_line(canvas, points, 10, &line_dsc);
 
     // Rotate canvas
     rotate_canvas(canvas);
@@ -157,7 +161,8 @@ static void draw_middle(lv_obj_t *widget, const struct status_state *state) {
 
     // Draw circles
     int circle_offsets[NICEVIEW_PROFILE_COUNT][2] = {
-        {13, 13}, {55, 13}, {34, 34}, {13, 55}, {55, 55},
+        {17, 34},
+        {51, 34},
     };
 
     for (int i = 0; i < NICEVIEW_PROFILE_COUNT; i++) {
@@ -355,27 +360,45 @@ ZMK_DISPLAY_WIDGET_LISTENER(widget_layer_status, struct layer_status_state, laye
 
 ZMK_SUBSCRIPTION(widget_layer_status, zmk_layer_state_changed);
 
-static void set_wpm_status(struct zmk_widget_status *widget, struct wpm_status_state state) {
-    for (int i = 0; i < 9; i++) {
-        widget->state.wpm[i] = widget->state.wpm[i + 1];
+static void set_mods_status(struct zmk_widget_status *widget, struct mods_status_state state) {
+    if (widget->state.mods == state.mods) {
+        return;
     }
-    widget->state.wpm[9] = state.wpm;
+    widget->state.mods = state.mods;
 
     draw_top(widget->obj, &widget->state);
 }
 
-static void wpm_status_update_cb(struct wpm_status_state state) {
+static void mods_status_update_cb(struct mods_status_state state) {
     struct zmk_widget_status *widget;
-    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) { set_wpm_status(widget, state); }
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) { set_mods_status(widget, state); }
 }
 
-struct wpm_status_state wpm_status_get_state(const zmk_event_t *eh) {
-    return (struct wpm_status_state){.wpm = zmk_wpm_get_state()};
-};
+// Track mods from the keycode events themselves rather than zmk_hid_get_explicit_mods(), since
+// listener order relative to hid_listener isn't guaranteed. Counts handle the same mod held on
+// several keys at once.
+static struct mods_status_state mods_status_get_state(const zmk_event_t *eh) {
+    static uint8_t counts[8];
+    static uint8_t mods;
+    const struct zmk_keycode_state_changed *ev = as_zmk_keycode_state_changed(eh);
 
-ZMK_DISPLAY_WIDGET_LISTENER(widget_wpm_status, struct wpm_status_state, wpm_status_update_cb,
-                            wpm_status_get_state)
-ZMK_SUBSCRIPTION(widget_wpm_status, zmk_wpm_state_changed);
+    if (ev != NULL && is_mod(ev->usage_page, ev->keycode)) {
+        int bit = ev->keycode - HID_USAGE_KEY_KEYBOARD_LEFTCONTROL;
+
+        if (ev->state) {
+            counts[bit]++;
+        } else if (counts[bit] > 0) {
+            counts[bit]--;
+        }
+        WRITE_BIT(mods, bit, counts[bit] > 0);
+    }
+
+    return (struct mods_status_state){.mods = mods};
+}
+
+ZMK_DISPLAY_WIDGET_LISTENER(widget_mods_status, struct mods_status_state, mods_status_update_cb,
+                            mods_status_get_state)
+ZMK_SUBSCRIPTION(widget_mods_status, zmk_keycode_state_changed);
 
 int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     widget->obj = lv_obj_create(parent);
@@ -397,7 +420,7 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
 #endif
     widget_output_status_init();
     widget_layer_status_init();
-    widget_wpm_status_init();
+    widget_mods_status_init();
 
     return 0;
 }

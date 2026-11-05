@@ -10,8 +10,9 @@
 
 #include <lvgl.h>
 #include <zmk/endpoints.h>
+#include <dt-bindings/zmk/modifiers.h>
 
-#define NICEVIEW_PROFILE_COUNT 5
+#define NICEVIEW_PROFILE_COUNT 2
 
 #define CANVAS_SIZE 68
 #define CANVAS_COLOR_FORMAT LV_COLOR_FORMAT_L8 // smallest type supported by sw_rotate
@@ -37,7 +38,7 @@ struct status_state {
     uint8_t peripheral_battery; // 0 = unknown
     uint8_t layer_index;
     const char *layer_label;
-    uint8_t wpm[10];
+    uint8_t mods; // HID modifier bitmask (MOD_L*/MOD_R*)
 #else
     bool connected;
 #endif

@@ -18,4 +18,3 @@ config ZMK_CORNE_STATUS_SCREEN
     select LV_FONT_UNSCII_8
     select LV_USE_IMAGE
     select LV_USE_CANVAS
-    select ZMK_WPM
