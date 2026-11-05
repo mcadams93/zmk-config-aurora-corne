@@ -16,7 +16,7 @@ ZMK firmware configuration for the [splitkb Aurora Corne](https://splitkb.com/pr
 | 0 | Default | Base layer; `&to 0` from the inner thumb key on Symbol/Cursor |
 | 1 | Symbol | Hold Space (right inner thumb); or tap the right thumb on Lower (`&to 1`) |
 | 2 | Cursor | Hold Backspace (left middle thumb); or tap the left thumb on Lower (`&to 2`) |
-| 3 | Lower (numbers) | Hold Delete or Tab (the two innermost thumbs) |
+| 3 | Numbers (`lower`) | Hold Delete or Tab (the two innermost thumbs) |
 
 **Home-row mods** (C I E A / H T S N = Ctrl Alt Cmd Shift / Shift Cmd Alt Ctrl):
 * Balanced hold-tap, 250 ms tapping term, 150 ms quick-tap, 150 ms `require-prior-idle-ms`.
@@ -54,11 +54,11 @@ The Cursor layer also has arrows, Home/End/PgUp/PgDn, undo/redo/cut/copy/paste/f
 ### Display (Left Half)
 
 A nice!view (Sharp memory LCD) on the left half only, with a custom status screen adapted from ZMK's nice!view widgets:
-* **Battery** for both halves, bar + percentage: **L** (with charging indicator) and **R** (shows `--` until the right half reports; full charge shows `100`)
+* **Battery** for both halves, bar + percentage: **L** (with charging indicator) and **R** (shows `--` until the right half reports; e.g. `100%`)
 * **Output** status icon (USB / BLE connected / BLE disconnected / unpaired)
 * **Bluetooth profiles** 1 and 2 (`BT_SEL 0` / `BT_SEL 1`) as circles: solid ring = connected, dashed = paired, filled = active
-* **Modifier row** `S C A G` (Shift, Ctrl, Alt, Cmd/GUI); a box is filled while that modifier (left or right) is held, including home-row mods
-* **Active layer** name
+* **Modifier row** `C A G S` (Ctrl, Alt, Cmd/GUI, Shift — home-row order); a box is filled while that modifier (left or right) is held, including home-row mods
+* **Active layer** name from each layer's `display-name`: Default, Symbol, Cursor, Numbers
 
 ---
 

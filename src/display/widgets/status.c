@@ -55,15 +55,14 @@ static void draw_battery_row(lv_obj_t *canvas, lv_coord_t y, const char *name, u
     char pct[6] = {};
 
     canvas_draw_text(canvas, 0, y + 4, 8, label_dsc, name);
-    draw_battery_at(canvas, 10, y, level, charging);
+    // Layout (68px): name 0-7, bar body 8-27, nub 29-30, 4px gap, "100%" 35-66 (unscii_8)
+    draw_battery_at(canvas, 8, y, level, charging, 20, 2);
     if (unknown) {
         strcpy(pct, "--");
-    } else if (level >= 100) {
-        strcpy(pct, "100"); // "100%" doesn't fit in the 24px left of the bar
     } else {
-        snprintf(pct, sizeof(pct), "%u%%", level);
+        snprintf(pct, sizeof(pct), "%u%%", MIN(level, 100));
     }
-    canvas_draw_text(canvas, 45, y + 4, 23, label_dsc, pct);
+    canvas_draw_text(canvas, 35, y + 4, 33, label_dsc, pct);
 }
 
 static void draw_top(lv_obj_t *widget, const struct status_state *state) {
@@ -113,15 +112,15 @@ static void draw_top(lv_obj_t *widget, const struct status_state *state) {
 
     canvas_draw_text(canvas, 0, 33, CANVAS_SIZE, &label_dsc, output_text);
 
-    // Draw modifiers: Shift, Ctrl, Alt, GUI (left or right variant), filled when active
+    // Draw modifiers in home-row order: Ctrl, Alt, GUI, Shift (either side), filled when active
     static const struct {
         const char *label;
         uint8_t mask;
     } mods[] = {
-        {"S", MOD_LSFT | MOD_RSFT},
         {"C", MOD_LCTL | MOD_RCTL},
         {"A", MOD_LALT | MOD_RALT},
         {"G", MOD_LGUI | MOD_RGUI},
+        {"S", MOD_LSFT | MOD_RSFT},
     };
 
     for (int i = 0; i < ARRAY_SIZE(mods); i++) {

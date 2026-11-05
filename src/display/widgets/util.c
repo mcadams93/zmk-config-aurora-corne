@@ -24,27 +24,33 @@ void rotate_canvas(lv_obj_t *canvas) {
 }
 
 void draw_battery(lv_obj_t *canvas, const struct status_state *state) {
-    draw_battery_at(canvas, 0, 0, state->battery, state->charging);
+    draw_battery_at(canvas, 0, 0, state->battery, state->charging, 29, 3);
 }
 
-void draw_battery_at(lv_obj_t *canvas, lv_coord_t x, lv_coord_t y, uint8_t level, bool charging) {
+void draw_battery_at(lv_obj_t *canvas, lv_coord_t x, lv_coord_t y, uint8_t level, bool charging,
+                     lv_coord_t body_w, lv_coord_t nub_w) {
     lv_draw_rect_dsc_t rect_black_dsc;
     init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
     lv_draw_rect_dsc_t rect_white_dsc;
     init_rect_dsc(&rect_white_dsc, LVGL_FOREGROUND);
+    lv_coord_t fill_max = body_w - 4;
 
-    canvas_draw_rect(canvas, x + 0, y + 2, 29, 12, &rect_white_dsc);
-    canvas_draw_rect(canvas, x + 1, y + 3, 27, 10, &rect_black_dsc);
+    canvas_draw_rect(canvas, x + 0, y + 2, body_w, 12, &rect_white_dsc);
+    canvas_draw_rect(canvas, x + 1, y + 3, body_w - 2, 10, &rect_black_dsc);
     if (level > 0) {
-        canvas_draw_rect(canvas, x + 2, y + 4, (level + 2) / 4, 8, &rect_white_dsc);
+        canvas_draw_rect(canvas, x + 2, y + 4, MAX(1, MIN(level, 100) * fill_max / 100), 8,
+                         &rect_white_dsc);
     }
-    canvas_draw_rect(canvas, x + 30, y + 5, 3, 6, &rect_white_dsc);
-    canvas_draw_rect(canvas, x + 31, y + 6, 1, 4, &rect_black_dsc);
+    canvas_draw_rect(canvas, x + body_w + 1, y + 5, nub_w, 6, &rect_white_dsc);
+    if (nub_w >= 3) {
+        canvas_draw_rect(canvas, x + body_w + 2, y + 6, nub_w - 2, 4, &rect_black_dsc);
+    }
 
     if (charging) {
         lv_draw_image_dsc_t img_dsc;
         lv_draw_image_dsc_init(&img_dsc);
-        canvas_draw_img(canvas, x + 9, y - 1, &bolt, &img_dsc);
+        // Center the 11px-wide bolt horizontally within the body
+        canvas_draw_img(canvas, x + (body_w - 11) / 2, y - 1, &bolt, &img_dsc);
     }
 }
 

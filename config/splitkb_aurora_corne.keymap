@@ -84,6 +84,8 @@
         compatible = "zmk,keymap";
 
         default_layer {
+
+            display-name = "Default";
             bindings = <
 &kp TILDE       &kp B                &kp Y            &kp O                &kp U              &kp SINGLE_QUOTE    &kp SEMI    &kp L               &kp D        &kp W             &kp V         &kp Z
 &kp LCTRL       &hml LEFT_CONTROL C  &hml LEFT_ALT I  &hml LEFT_COMMAND E  &hml LEFT_SHIFT A  &kp COMMA           &kp PERIOD  &hmr RIGHT_SHIFT H  &hmr RCMD T  &hmr_slow RIGHT_ALT S  &hmr_slow RCTRL N  &kp Q
@@ -93,6 +95,8 @@
         };
 
         symbol {
+
+            display-name = "Symbol";
             bindings = <
 &kp EXCLAMATION  &kp LEFT_BRACE  &kp SQT    &kp DOUBLE_QUOTES  &kp RIGHT_BRACE   &kp QUESTION     &trans  &kp GRAVE              &trans             &trans         &kp PERCENT  &kp BSPC
 &kp HASH         &kp CARET       &kp EQUAL  &kp UNDERSCORE     &kp DOLLAR        &kp ASTERISK     &trans  &kp LEFT_PARENTHESIS   &kp LEFT_BRACKET   &kp AMPERSAND  &kp PLUS     &trans
@@ -102,6 +106,8 @@
         };
 
         cursor {
+
+            display-name = "Cursor";
             bindings = <
 &bt BT_CLR_ALL  &sk LEFT_SHIFT  &kp K_REDO    &kp K_UNDO  &kp BACKSPACE   &kp K_CUT      &kp C_MUTE   &kp C_PLAY_PAUSE  &kp C_VOL_DN  &kp C_VOL_UP    &media_ht 0 C_NEXT  &bt BT_SEL 0
 &trans          &kp RCTRL       &kp LEFT_ALT  &kp LCMD    &kp LEFT_SHIFT  &kp K_COPY     &kp K_COPY   &kp LEFT_ARROW  &kp UP_ARROW  &kp DOWN_ARROW  &kp RIGHT        &bt BT_SEL 1
@@ -111,6 +117,8 @@
         };
 
         lower {
+
+            display-name = "Numbers";
             bindings = <
 &trans  &trans  &trans  &trans  &trans  &trans    &trans  &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans    &kp N0  &kp NUMBER_4  &kp N5        &kp NUMBER_6  &trans  &trans
